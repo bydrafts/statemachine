@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Drafts.StateMachines
@@ -20,17 +18,9 @@ namespace Drafts.StateMachines
         public TState CurrState { get; private set; }
 
         [SerializeField] private string currentState;
-        private readonly Dictionary<Type, TState> _states = new();
 
         private void Update() => CurrState?.Tick(Context, Time.deltaTime);
-        
-        public void ChangeState<T>(TContext context, object data = null) where T : TState, new()
-        {
-            if (!_states.TryGetValue(typeof(T), out var state))
-                _states[typeof(T)] = state = new T();
-            Initialize(context, state, data);
-        }
-        
+
         public void ChangeState(TState next, object data = null)
         {
             PrevState = CurrState;
@@ -41,13 +31,6 @@ namespace Drafts.StateMachines
             CurrState.Enter(Context, data);
         }
 
-        public void Initialize<T>(TContext context, object data = null) where T : TState, new()
-        {
-            var state = new T();
-            _states[typeof(T)] = state;
-            Initialize(context, state, data);
-        }
-        
         public void Initialize(TContext context, TState defaultState, object data = null)
         {
             Context = context;
